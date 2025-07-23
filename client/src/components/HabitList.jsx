@@ -1,6 +1,6 @@
 import HabitItem from './HabitItem'
 
-function HabitList({ habits }) {
+function HabitList({ habits, onToggleComplete, onDelete, onUpdate }) {
   return (
     <div>
       <h2>Your Habits ({habits.length})</h2>
@@ -9,7 +9,13 @@ function HabitList({ habits }) {
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {habits.map(habit => (
-            <HabitItem key={habit.id} habit={habit} />
+            <HabitItem 
+              key={habit.id} 
+              habit={habit} 
+              onToggleComplete={onToggleComplete}
+              onDelete={onDelete}
+              onUpdate={onUpdate}
+            />
           ))}
         </ul>
       )}

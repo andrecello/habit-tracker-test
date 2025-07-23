@@ -52,4 +52,71 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Add these new routes to your existing habits.js file
+
+// PUT /api/habits/:id/toggle - toggle habit completion
+router.put('/:id/toggle', async (req, res) => {
+  try {
+    const habit = await prisma.habit.findUnique({
+      where: { id: parseInt(req.params.id) }
+    });
+    
+    if (!habit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+    
+    const updatedHabit = await prisma.habit.update({
+      where: { id: parseInt(req.params.id) },
+      data: { completed: !habit.completed }
+    });
+    
+    res.json(updatedHabit);
+  } catch (err) {
+    console.error("Error updating habit:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// DELETE /api/habits/:id - delete a habit
+router.delete('/:id', async (req, res) => {
+  try {
+    const habit = await prisma.habit.findUnique({
+      where: { id: parseInt(req.params.id) }
+    });
+    
+    if (!habit) {
+      return res.status(404).json({ error: "Habit not found" });
+    }
+    
+    await prisma.habit.delete({
+      where: { id: parseInt(req.params.id) }
+    });
+    
+    res.json({ message: "Habit deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting habit:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// PUT /api/habits/:id - update habit title
+router.put('/:id', async (req, res) => {
+  const { title } = req.body;
+  
+  if (!title) {
+    return res.status(400).json({ error: "Title is required" });
+  }
+  
+  try {
+    const updatedHabit = await prisma.habit.update({
+      where: { id: parseInt(req.params.id) },
+      data: { title }
+    });
+    
+    res.json(updatedHabit);
+  } catch (err) {
+    console.error("Error updating habit:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 module.exports = router;

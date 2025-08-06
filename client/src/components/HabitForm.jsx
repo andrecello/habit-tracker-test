@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function HabitForm({ onHabitCreated }) {
+function HabitForm({ onHabitCreated, authToken }) {
   const [newHabitTitle, setNewHabitTitle] = useState('')
   const [error, setError] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -16,10 +16,11 @@ function HabitForm({ onHabitCreated }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}` // Add auth token here
         },
         body: JSON.stringify({
-          title: newHabitTitle,
-          userId: 2 // Using test user for now
+          title: newHabitTitle
+          // No need for userId - server gets it from token!
         })
       })
 
@@ -28,7 +29,7 @@ function HabitForm({ onHabitCreated }) {
       }
 
       const newHabit = await response.json()
-      onHabitCreated(newHabit) // Call parent function to update habits list
+      onHabitCreated(newHabit)
       setNewHabitTitle('')
       setError(null)
     } catch (err) {
